@@ -23,7 +23,7 @@ export default function connectionReducer(state = initialState, action = {}) {
             return newState
         }
         case "ADD_CONNECTION": {
-            const connections = [...state.connections, action.connection]
+            const connections = [...state.connections, action.connections]
             const newState = {
                 ...state,
                 connections: connections
