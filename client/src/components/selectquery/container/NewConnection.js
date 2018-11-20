@@ -30,13 +30,15 @@ export class NewConnectionDialog extends Component {
   }
 
   render() {
+    console.log("render() : NewConnection")
     return (
-      <div style={{ marginTop: 8 * 3 }}>
+      <div style={{ marginTop: '5px' }}>
               <Tooltip id="newConn" title="New Connection">
                 <Button
                   variant="fab"
                   onClick={this.handleClickOpen}
-                  aria-label="add">
+                  aria-label="add"
+                  style={{margin: '5px'}}>
                   <AddIcon />
                 </Button>
               </Tooltip>
@@ -119,7 +121,7 @@ export class NewConnectionDialog extends Component {
                     keyspace: this.state.keyspace,
                     name: this.state.name
                   }
-                  this.props.AddNewConnection(this.props.connectionsReducer.connections, conn)
+                  this.props.AddNewConnection(conn)
                 }
                 this.handleClose()
               }
@@ -134,17 +136,10 @@ export class NewConnectionDialog extends Component {
   }
 }
 
-
-const mapStateToProps = (state) => {
-  return {
-    connectionsReducer: state.connectionsReducer,
-  }
-}
-
 const matchDispatchToProps = (dispatch) => {
   return bindActionCreators({
     AddNewConnection: AddNewConnection
   }, dispatch)
 }
 
-export default connect(mapStateToProps, matchDispatchToProps)(NewConnectionDialog)
+export default connect(null, matchDispatchToProps)(NewConnectionDialog)

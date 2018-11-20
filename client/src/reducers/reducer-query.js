@@ -1,74 +1,75 @@
 const initialState = {
-    keyspace: "", 
-    columnFamily: "", 
-    columns: [], 
-    filterBy: "", 
-    operation: "", 
-    statement: "",
-    condition: "",
-    limit: 100,
-  }
-  
-  export default function queryReducer(state = initialState, action = {}) {
-    switch (action.type) {
-      case "KEYSPACE_VALUE_CHANGED": {
-        const newState = {
-          ...state,
-          keyspace: action.keyspace,
-          columnFamily: initialState.columnFamily,
-          columns: initialState.columns,
-          filterBy: initialState.filterBy, 
-          operation: initialState.operation, 
-          statement: initialState.statement,
-          condition: initialState.condition,
-        }
-        return newState
+  keyspace: "", 
+  columnFamily: "", 
+  columns: [], 
+  filterBy: "", 
+  operation: "", 
+  statement: "",
+  condition: "",
+  limit: 100,
+}
+
+export default function queryReducer(state = initialState, action = {}) {
+  switch (action.type) {
+    case "KEYSPACE_VALUE_CHANGED": {
+      const newState = {
+        ...state,
+        keyspace: action.keyspace,
+        columnFamily: initialState.columnFamily,
+        columns: initialState.columns,
+        filterBy: initialState.filterBy, 
+        operation: initialState.operation, 
+        statement: initialState.statement,
+        condition: initialState.condition,
       }
-      case "COLUMN_FAMILY_VALUE_CHANGED": {
-        const newState = {
-          ...state,
-          columnFamily: action.columnFamily,
-          columns: initialState.columns,
-          filterBy: initialState.filterBy, 
-          operation: initialState.operation, 
-          statement: initialState.statement,
-          condition: initialState.condition,       
-        }
-        return newState
+      return newState
+    }
+    case "COLUMN_FAMILY_VALUE_CHANGED": {
+      const newState = {
+        ...state,
+        columnFamily: action.columnFamily,
+        columns: initialState.columns,
+        filterBy: initialState.filterBy, 
+        operation: initialState.operation, 
+        statement: initialState.statement,
+        condition: initialState.condition,       
       }
-      case "COLUMNS_VALUE_CHANGED": {
-        return {
-          ...state,
-          columns: [...action.columns],
-        }
+      return newState
+    }
+    case "COLUMNS_VALUE_CHANGED": {
+      return {
+        ...state,
+        columns: [...action.columns],
       }
-  
-  
-      case "CONDITION_CHANGED": {
-        const newState = {
-          ...state,
-          condition: action.condition
-        }
-        return newState
+    }
+
+
+    case "CONDITION_CHANGED": {
+      const newState = {
+        ...state,
+        condition: action.condition
       }
-      case "QUERY_FORMED": {
-        const newState = {
-          ...state,
-          statement: action.statement
-        }
-        return newState
+      return newState
+    }
+    case "QUERY_FORMED": {
+      const newState = {
+        ...state,
+        statement: action.statement
       }
-      case "ADD_LIMIT": {
-        const newState = {
-          ...state,
-          limit: action.limit
-        }
-        return newState
+      return newState
+    }
+    case "ADD_LIMIT": {
+      const newState = {
+        ...state,
+        limit: action.limit
       }
-      case "RESET_STATE": {
-        return initialState
-      }
-      default: return state
-  
-   }
-  }  
+      return newState
+    }
+    case "RESET_STATE": {
+      return initialState
+    }
+    default: return state
+
+ }
+}
+

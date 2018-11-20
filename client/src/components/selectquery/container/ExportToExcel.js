@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import ReactExport from "react-data-export";
 import IconButton from '@material-ui/core/IconButton'
-import { Paper } from '@material-ui/core'
 import FileDownload from '@material-ui/icons/FileDownload'
 import Tooltip from '@material-ui/core/Tooltip'
 const ExcelFile = ReactExport.ExcelFile;
@@ -29,17 +28,18 @@ export default class ExportToExcel extends Component {
   }
 
   render() {
+    console.log("render() : ExportToExcel")
     return (
       <ExcelFile filename={this.props.fileName}
-        element={<Paper style={{ paddingBottom: '10px', paddingLeft: '10px', paddingRight: '10px' }}>
-          <Tooltip id="newConn" title="Export to Excel">
+        element={
+        <Tooltip id="newConn" title="Export to Excel">
             <IconButton
               variant="fab"
               aria-label="add" style={{ background: '#4CAF50' }}>
               <FileDownload style={{ height: '15px', width: '15px', color: 'white' }} />
             </IconButton>
-          </Tooltip>
-        </Paper>}>
+        </Tooltip>
+      }>
         <ExcelSheet data={this.transformData(this.props.data)} name={this.props.sheetName}>
           {
             this.props.columnDetails.map((obj, index) => {

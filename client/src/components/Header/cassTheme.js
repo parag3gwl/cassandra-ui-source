@@ -154,6 +154,13 @@ const muiMenuItem = {
     fontSize: '12px',
   },
 }
+
+const muiInput = {
+  root: {
+    fontSize: '12px',
+  }
+}
+
 export const theme = createMuiTheme({
     overrides: {
       MuiAppBar: muiAppBar,
@@ -166,6 +173,7 @@ export const theme = createMuiTheme({
       MuiInputLabel:muiInputLabel,
       MuiMenuItem: muiMenuItem,
       MuiIconButton: muiIconButton,
+      MuiInput: muiInput,
     },
     
   })

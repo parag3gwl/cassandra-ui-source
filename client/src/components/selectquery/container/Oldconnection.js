@@ -49,7 +49,9 @@ export class Oldconnection extends Component {
     this.props.resetState()
   }
 
+
   render() {
+    console.log("render() : OldConnection")
     const { classes, connectionsReducer } = this.props
     
     if(connectionsReducer === undefined){

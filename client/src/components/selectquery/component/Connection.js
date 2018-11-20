@@ -1,10 +1,12 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Paper } from "@material-ui/core"
 import Oldconnection from './../container/Oldconnection'
 import NewConnection from './../container/NewConnection'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import { withStyles } from '@material-ui/core/styles'
+import ImportDBConnection from './ImportDBConnection'
+import ExportDBConnection from './ExportDBConnection'
 
 const styles = cardTheme => ({
   card: {
@@ -23,23 +25,32 @@ const styles = cardTheme => ({
   },
 })
 
-export class Connection extends Component {
-  render() {
-    const { classes } = this.props
+const Connection = (props) => {
+    const { classes } = props
     return (
-      <Paper>
+      <Paper >
+        <Card className={classes.card}>
+          <div className={classes.details}>
+            <CardContent className={classes.content}><ImportDBConnection />
+            </CardContent>
+          </div>
+          <CardContent className={classes.content}>
+            <ExportDBConnection />
+          </CardContent>
+        </Card>
+
         <Card className={classes.card}>
           <div className={classes.details}>
             <CardContent className={classes.content}>
-          <NewConnection />
+              <NewConnection />
             </CardContent>
           </div>
           <CardContent className={classes.content}>
             <Oldconnection />
           </CardContent>
-        </Card>        
+        </Card>
       </Paper>
     )
   }
-}
+
 export default (withStyles(styles)(Connection))

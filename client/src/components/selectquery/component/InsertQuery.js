@@ -33,32 +33,37 @@ const styles = theme => ({
 })
 
 class InsertQuery extends Component {
+
   kindOfComponent = (obj) => {
     switch (obj["type"]) {
       case 'boolean': {
-        return (<FormControlLabel
-          control={
-            <Checkbox
-              checked={this.props.insertDataReducer[obj["column_name"]]}
-              onChange={(event) => {
-                this.props.setColumns([obj["column_name"]], event.target.checked)
-              }}
-              value={obj["column_name"]}
-              color="primary"
-              default={true}
-            />
-          }
-          label={obj["column_name"]}
-        />)
+        return (
+          <FormControlLabel
+            style={{paddingLeft: '3%', paddingTop: '3%'}}
+            control={
+              <Checkbox
+                style={{ background: 'white' }}
+                checked={ (this.props.insertDataReducer[obj["column_name"]]===undefined) ? true : this.props.insertDataReducer[obj["column_name"]]}
+                onChange={(event) => {
+                  this.props.setColumns([obj["column_name"]], event.target.checked)
+                }}
+                value={obj["column_name"]}
+                color="primary"
+                default={true}
+              />
+            }
+            label={obj["column_name"]}
+          />)
       }
       default: {
         return (<TextField
           margin="dense"
           id={obj["column_name"]}
           label={obj["column_name"]}
+          value={this.props.insertDataReducer[obj["column_name"]]}
           fullWidth
           onChange={(event) => {
-            this.props.setColumns([obj["column_name"]], event.target.value)
+            this.props.setColumns([obj["column_name"]], event.target.value )
           }
           } />)
 
@@ -70,20 +75,22 @@ class InsertQuery extends Component {
     if (columnDetails === undefined) {
       return null
     }
-    return (columnDetails.map((obj) => {
-      return (
-        <Grid item sm={4}>
-          {this.kindOfComponent(obj)}
-        </Grid>
-      )
-    })
+    return (
+      columnDetails.map((obj) => {
+        return (
+          <Grid item sm={4}>
+            {
+              this.kindOfComponent(obj)
+            }
+
+          </Grid>
+        ) // End of map return
+      }) // End of map
     )
   }
 
   handleOnClick = () => {
-    const { insertDataReducer } = this.props
-    const { keyspace, columnFamily } = this.props.queryReducer
-    const { columnDetails } = this.props.formDataReducer
+    const { keyspace, columnFamily, columnDetails, insertDataReducer } = this.props
 
     let columns = ""
     let values = ""
@@ -94,8 +101,11 @@ class InsertQuery extends Component {
     Object.keys(insertDataReducer).map((key) => {
       columns += key + ", "
       let type = columnsAttributes[key].type
-      if (type.startsWith("list") || type.startsWith("set") || type === "boolean") {
-        return values += insertDataReducer[key] + ", "
+      if (type.startsWith("list") || type.startsWith("set")) {
+        return values += '[' + insertDataReducer[key] + "], "
+      }
+      else if (type === "boolean") {
+        return values += insertDataReducer[key] + ', '
       }
       else {
         return values += "'" + insertDataReducer[key] + "', "
@@ -114,7 +124,7 @@ class InsertQuery extends Component {
   handleClose = () => {
   }
 
-  insertRecord(queryStatement) {
+  insertRecord = (queryStatement) => {
     let resp
     resp = CassandraAPICalls.fireUpdateQuery(queryStatement).then(
       resp => {
@@ -134,8 +144,8 @@ class InsertQuery extends Component {
   }
 
   render() {
-    const { classes } = this.props
-    const { columnDetails } = this.props.formDataReducer
+    const { classes, columnDetails } = this.props
+
     return (
       <Paper>
         <Notification />
@@ -160,8 +170,10 @@ class InsertQuery extends Component {
             null}
 
         <Grid container spacing={40} style={{ paddingLeft: '0.5%' }}>
+          {
+            this.DisplayColumns(classes, columnDetails)
+          }
 
-          {this.DisplayColumns(classes, columnDetails)}
         </Grid>
         <Grid container spacing={24}>
           <Grid item sm={6} align="right">
@@ -182,19 +194,22 @@ class InsertQuery extends Component {
         </Grid>
       </Paper>
     )
+
   }
 }
+
 const mapStateToProps = (state) => {
   return {
-    formDataReducer: state.formDataReducer,
+    columnDetails: state.formDataReducer.columnDetails,
+    keyspace: state.queryReducer.keyspace,
+    columnFamily: state.queryReducer.columnFamily,
     insertDataReducer: state.insertDataReducer,
-    queryReducer: state.queryReducer,
   }
 }
 const matchDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    setColumns: setColumns,
-    showNotification, showNotification,
+    setColumns,
+    showNotification,
   }, dispatch)
 }
 export default connect(mapStateToProps, matchDispatchToProps)(withStyles(styles)(InsertQuery))

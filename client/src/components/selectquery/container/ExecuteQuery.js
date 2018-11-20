@@ -62,7 +62,7 @@ class ExecuteQuery extends Component {
     }
 
     handleOnClick = () => {
-        const { statement } = this.props.queryReducer
+        const { statement } = this.props
 
         if (statement === "") {
             this.props.showNotification(true, "Select keyspace, column family and columns for this operation", 'warning')
@@ -78,13 +78,14 @@ class ExecuteQuery extends Component {
     }
 
     render() {
+        console.log("render() : ExecuteQuery")
         return (
             <div>
                 <Notification />
                 <TextField id="query"
                     label="query"
                     multiline
-                    value={this.props.queryReducer.statement}
+                    value={this.props.statement}
                     onChange={(event) => this.props.AddQueryStatement(event.target.value)}
                     style={{ width: '99%', margin: '0.5%', }}>
                 </TextField>
@@ -114,7 +115,7 @@ class ExecuteQuery extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        queryReducer: state.queryReducer,
+        statement: state.queryReducer.statement,
     }
 }
 

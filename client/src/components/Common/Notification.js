@@ -88,15 +88,14 @@ MySnackbarContent.propTypes = {
 
 const MySnackbarContentWrapper = withStyles(styles1)(MySnackbarContent)
 
-class Notification extends React.Component {
-  handleClose = (event, reason) => {
+const Notification = (props) => {
+  const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return
     }
-    this.props.showNotification(false, "", this.props.notificationNature)
+    props.showNotification(false, "", props.notificationNature)
   }
 
-  render() {
     return (
       <div>
         <Snackbar
@@ -104,20 +103,19 @@ class Notification extends React.Component {
             vertical: "bottom",
             horizontal: "left"
           }}
-          open={this.props.notificationIsShown}
+          open={props.notificationIsShown}
           autoHideDuration={2000}
-          onClose={this.handleClose}
+          onClose={handleClose}
         >
           <MySnackbarContentWrapper
-            onClose={this.handleClose}
-            variant={this.props.notificationNature}
-            message={this.props.notificationMessage}
+            onClose={handleClose}
+            variant={props.notificationNature}
+            message={props.notificationMessage}
           />
         </Snackbar>
       </div>
     )
   }
-}
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({ showNotification }, dispatch)

@@ -5,10 +5,8 @@ import Typography from '@material-ui/core/Typography'
 import { connect } from 'react-redux'
 import { Wave } from 'react-animated-text';
   
-class Header extends React.Component{
-    
-    render(){
-        const { connectionsReducer } = this.props
+const Header = (props) => {
+        const { connectionsReducer } = props
 
         if (connectionsReducer.connections === undefined){
             return null
@@ -30,7 +28,7 @@ class Header extends React.Component{
             </div>
         )
     }
-}
+
 const mapStateToProps = (state) => {
     return {
       connectionsReducer: state.connectionsReducer

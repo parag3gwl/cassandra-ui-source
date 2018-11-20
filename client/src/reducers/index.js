@@ -6,6 +6,7 @@ import resultDataReducer from "./reducer-resultdata"
 import conditionReducer from "./reducer-condition"
 import notificationReducer from "./reducer-notification"
 import insertDataReducer from "./reducer-insertData"
+import editDialogReducer from "./reducer-editDialog"
 
 const allReducers = combineReducers(
     {
@@ -16,6 +17,7 @@ const allReducers = combineReducers(
         conditionReducer: conditionReducer,
         notificationReducer: notificationReducer,
         insertDataReducer: insertDataReducer,
+        editDialogReducer: editDialogReducer,
     }
 )
 export default allReducers
