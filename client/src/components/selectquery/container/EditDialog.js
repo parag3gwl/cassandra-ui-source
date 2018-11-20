@@ -1,45 +1,32 @@
 import React, { Component } from 'react'
 import { Grid, Button, TextField } from "@material-ui/core"
 import { Dialog, DialogTitle, DialogContent, DialogActions } from "@material-ui/core"
-import Tooltip from '@material-ui/core/Tooltip'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import EditIcon from '@material-ui/icons/Edit'
 import { arrayToObject } from '../../../components/Common/Utilities'
 import CassandraAPICalls from '../../../Service/CassandraAPICalls'
 import { showNotification } from "./../../../actions/NotificationActionCreater"
 import Notification from "./../../Common/Notification"
+import { flipEditDailog, updateEditDailogData } from "../../../actions/EditDialogActionCreator"
 
 class EditDialog extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      open: false,
-      data: { ...this.props.data }
-    }
-  }
-
-  handleClickOpen = () => {
-    this.setState({ open: true })
-  }
-
   handleClose = () => {
-    this.setState({ open: false })
+    this.props.flipEditDailog({})
   }
 
   getDisplayValue = (type, field) => {
-    if (this.state.data[field] === null) {
+    if (this.props.data[field] === null) {
       return null
     }
 
     if (type.startsWith("list") || type.startsWith("set")) {
-      var json = JSON.stringify(this.state.data[field])
+      var json = JSON.stringify(this.props.data[field])
       //json = json.replace(/"(\w+)"\s*:/g, '$1:')
       //json = json.replace(/"/g, "'")
 
       return json
     }
-    return this.state.data[field]
+    return this.props.data[field]
   }
 
   handleOnChange = (type, value, field) => {
@@ -60,18 +47,17 @@ class EditDialog extends Component {
       pair = { [field]: value }
     }
 
-    this.setState({
-      data:
+    this.props.updateEditDailogData(
       {
-        ...this.state.data,
+        ...this.props.data,
         ...pair
       }
-    })
+    )
   }
 
   getPairBasedOnType(type, field, value) {
     if (type.startsWith("list") || type.startsWith("set")) {
-      return field + "=" + JSON.stringify(this.state.data[field]) + " "
+      return field + "=" + JSON.stringify(this.props.data[field]) + " "
     }
 
     switch (type) {
@@ -87,7 +73,7 @@ class EditDialog extends Component {
   }
 
   handleOnClick = (columnsAttributes) => {
-    const { data } = this.state
+    const { data } = this.props
     const { keyspace, columnFamily } = this.props.queryReducer
 
     let query = "UPDATE " + keyspace + "." + columnFamily + " SET "
@@ -135,8 +121,30 @@ class EditDialog extends Component {
     console.log(resp)
   }
 
+  componentWillMount() {
+    console.log("componentWillMount : EditDialog")
+  }
+
+  componentDidMount() {
+    console.log("componentDidMount : EditDialog")
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log("shouldComponentUpdate : EditDialog")
+    return true
+  }
+
+  
+  static getDerivedStateFromProps(props, state) {
+    console.log("getDerivedStateFromProps EditDialog")
+    return {
+      data: props.data,
+    }
+  }
+
   render() {
-    const { data } = this.state
+    console.log("render() : EditDialog")
+    const { data } = this.props
     const { columnDetails } = this.props.formDataReducer
     if (data === undefined || columnDetails === undefined) {
       return null
@@ -149,11 +157,8 @@ class EditDialog extends Component {
     return (
       <div>
         <Notification />
-        <Tooltip id="newConn" title=" Edit Record">
-          <EditIcon onClick={this.handleClickOpen} style={{ height: '15px', width: '15px' }} />
-        </Tooltip>
         <Dialog
-          open={this.state.open}
+          open={this.props.isOpen}
           onClose={this.handleClose}
           aria-labelledby="form-dialog-title"
         >
@@ -214,12 +219,16 @@ const mapStateToProps = (state) => {
   return {
     formDataReducer: state.formDataReducer,
     queryReducer: state.queryReducer,
+    isOpen: state.editDialogReducer.isOpen,
+    data: state.editDialogReducer.data,
   }
 }
 
 const matchDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    showNotification: showNotification,
+    showNotification,
+    flipEditDailog,
+    updateEditDailogData
   }, dispatch)
 }
 

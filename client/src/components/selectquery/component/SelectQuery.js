@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import {Grid, Paper} from '@material-ui/core'
 import ExecuteQuery from './../container/ExecuteQuery'
 import ConditionContainer from './../container/ConditionContainer'
@@ -27,9 +27,8 @@ const styles = theme => ({
     },
   })
 
-export class SelectQuery extends Component {
-    render() {
-        const { classes } = this.props
+const SelectQuery = (props) => {
+        const { classes } = props
         return (
             <Paper>
                 <Grid container>
@@ -49,6 +48,5 @@ export class SelectQuery extends Component {
             </Paper>
         )
     }
-}
 
 export default withStyles(styles)(SelectQuery)

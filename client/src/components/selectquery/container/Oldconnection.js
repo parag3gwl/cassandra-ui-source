@@ -49,7 +49,9 @@ export class Oldconnection extends Component {
     this.props.resetState()
   }
 
+
   render() {
+    console.log("render() : OldConnection")
     const { classes, connectionsReducer } = this.props
     
     if(connectionsReducer === undefined){
@@ -64,6 +66,7 @@ export class Oldconnection extends Component {
             (connectionsReducer.connections === undefined) ? null :
               connectionsReducer.connections.map((conn, index) => {
                 return (
+                  (conn === undefined || conn === null) ? null :
                   <Paper key={index} style={{ width: '70%' }}>
                     <ListItem button>
                     <Tooltip title="Delete Connection">

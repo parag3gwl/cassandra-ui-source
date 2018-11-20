@@ -12,16 +12,20 @@ import IconButton from '@material-ui/core/IconButton'
 class ConditionCombination extends Component {
 
     handleRemoveConditionClick = () => {
+        let conditionReducerCopy = this.props.conditionReducer
         if (this.props.conditionReducer.count > 1) {
-            let conditionReducerCopy = this.props.conditionReducer
             conditionReducerCopy.filterByCondtion.splice(this.props.id, 1)
             conditionReducerCopy.count = conditionReducerCopy.count - 1
-            this.props.DecreaseConditions(conditionReducerCopy)
         }
-
+        else {
+            conditionReducerCopy.filterByCondtion = []
+            conditionReducerCopy.count = 1
+        }
+        this.props.DecreaseConditions(conditionReducerCopy)
     }
 
     render() {
+        console.log("render() : ConditionCombination")
         const { classes } = this.props
         return (
             <div>
@@ -46,8 +50,8 @@ class ConditionCombination extends Component {
                         }}
                         style={{ fontSize: '12px' }}
                     >
-                        {(this.props.formDataReducer["filterBy"] !== undefined) ?
-                            this.props.formDataReducer["filterBy"].map((val, index) =>
+                        {(this.props.filterBy !== undefined) ?
+                            this.props.filterBy.map((val, index) =>
                                 <MenuItem key={index} value={val}>{val.column_name}</MenuItem>)
                             : null}
                     </Select>
@@ -70,14 +74,20 @@ class ConditionCombination extends Component {
                         }}
                         style={{ fontSize: '12px' }}
                     >
-                        {(this.props.formDataReducer["operation"] !== undefined) ?
-                            this.props.formDataReducer["operation"].map((val, index) => <MenuItem key={index} value={val}>{val}</MenuItem>)
+                        {(this.props.operation !== undefined) ?
+                            this.props.operation.map((val, index) => <MenuItem key={index} value={val}>{val}</MenuItem>)
                             : null}
                     </Select>
                 </FormControl>
                 <TextField id="condition"
                     label="condition"
                     placeholder="Condition"
+                    onKeyPress={(ev) => {
+                        /*When we press enter key it submit form and redirect to other page*/
+                        if (ev.key === 'Enter') {
+                            ev.preventDefault()
+                        }
+                    }}
                     value={
                         (this.props.conditionReducer.filterByCondtion[this.props.id] !== undefined) ?
                             this.props.conditionReducer.filterByCondtion[this.props.id].condition : ""
@@ -114,7 +124,8 @@ class ConditionCombination extends Component {
 const mapStateToProps = (state) => {
     return {
         queryReducer: state.queryReducer,
-        formDataReducer: state.formDataReducer,
+        filterBy: state.formDataReducer.filterBy,
+        operation: state.formDataReducer.operation,
         conditionReducer: state.conditionReducer,
     }
 }

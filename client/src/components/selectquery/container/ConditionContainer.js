@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { TextField, Grid } from '@material-ui/core'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { handleConditionChange,AddLimit, PrepareQuertyStatement} from './../../../actions/actioncreater'
+import { AddLimit, PrepareQuertyStatement} from './../../../actions/actioncreater'
 import ConditionCombination from './ConditionCombination'
 class ConditionContainer extends Component {
     displayCondtions = (count) => {
@@ -14,8 +14,9 @@ class ConditionContainer extends Component {
         }
         return data
     }
-
+    
     render() {
+        console.log("render() : ConditionContainer")
         const { classes } = this.props
         const count = this.props.conditionReducer.count
         return (
@@ -49,7 +50,6 @@ const mapStateToProps = (state) => {
 
 const matchDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        handleConditionChange: handleConditionChange,
         AddLimit: AddLimit,
         PrepareQuertyStatement: PrepareQuertyStatement,
     }, dispatch)

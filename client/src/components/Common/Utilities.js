@@ -1,5 +1,3 @@
-export  const arrayToObject = (arrayToObject, keyField) => {
-    return Object.assign({}, ...arrayToObject.map(item=> (
-        {[item[keyField]]: item}
-    )))
-}
+
+export const arrayToObject = (arr, keyField) =>
+{return Object.assign({}, ...arr.map(item => ({[item[keyField]]: item})))}

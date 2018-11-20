@@ -6,101 +6,17 @@ import {
 import { connect } from 'react-redux'
 import Tooltip from '@material-ui/core/Tooltip'
 import { bindActionCreators } from 'redux'
-import { withStyles } from '@material-ui/core/styles'
-import PropTypes from 'prop-types'
-import IconButton from '@material-ui/core/IconButton'
-import FirstPageIcon from '@material-ui/icons/FirstPage'
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight'
-import LastPageIcon from '@material-ui/icons/LastPage'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { AddQueryStatement } from "../../../actions/actioncreater"
+import { flipEditDailog } from "../../../actions/EditDialogActionCreator"
 import EditDialog from "./EditDialog"
 import ExportToExcel from './ExportToExcel'
+import TablePaginationActionsWrapped from './TablePaginationActions'
+import EditIcon from '@material-ui/icons/Edit'
+
 var JSONPretty = require('react-json-pretty');
 require('react-json-pretty/JSONPretty.adventure_time.styl');
 
-const actionsStyles = theme => ({
-  root: {
-    flexShrink: 0,
-    color: theme.palette.text.secondary,
-    marginLeft: theme.spacing.unit * 2.5,
-  },
-})
-class TablePaginationActions extends React.Component {
-  handleFirstPageButtonClick = event => {
-    this.props.onChangePage(event, 0)
-  }
-
-  handleBackButtonClick = event => {
-    this.props.onChangePage(event, this.props.page - 1)
-  }
-
-  handleNextButtonClick = event => {
-    this.props.onChangePage(event, this.props.page + 1)
-  }
-
-  handleLastPageButtonClick = event => {
-    this.props.onChangePage(
-      event,
-      Math.max(0, Math.ceil(this.props.count / this.props.rowsPerPage) - 1),
-    )
-  }
-
-  render() {
-    const { classes, count, page, rowsPerPage, theme } = this.props
-
-    return (
-      <div className={classes.root}>
-        <IconButton
-          onClick={this.handleFirstPageButtonClick}
-          disabled={page === 0}
-          aria-label="First Page"
-          style={{ background: 'white' }}
-        >
-          {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-        </IconButton>
-        <IconButton
-          onClick={this.handleBackButtonClick}
-          disabled={page === 0}
-          aria-label="Previous Page"
-          style={{ background: 'white' }}
-        >
-          {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-        </IconButton>
-        <IconButton
-          onClick={this.handleNextButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="Next Page"
-          style={{ background: 'white' }}
-        >
-          {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-        </IconButton>
-        <IconButton
-          onClick={this.handleLastPageButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="Last Page"
-          style={{ background: 'white' }}
-        >
-          {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-        </IconButton>
-      </div>
-    )
-  }
-}
-
-TablePaginationActions.propTypes = {
-  classes: PropTypes.object.isRequired,
-  count: PropTypes.number.isRequired,
-  onChangePage: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-  theme: PropTypes.object.isRequired,
-}
-
-const TablePaginationActionsWrapped = withStyles(actionsStyles, { withTheme: true })(
-  TablePaginationActions,
-)
 
 class Result extends Component {
   constructor(props) {
@@ -115,10 +31,10 @@ class Result extends Component {
   }
   handleRecordDelete = (indexToDelete, dataToDelete) => {
     let query = ""
-    query = "delete from " + this.props.queryReducer.keyspace + "." + this.props.queryReducer.columnFamily
+    query = "delete from " + this.props.keyspace + "." + this.props.columnFamily
 
     let conditions = ""
-    this.props.formDataReducer.columnDetails.map((obj) => {
+    this.props.columnDetails.map((obj) => {
       if ((obj.kind === 'partition_key' || obj.kind === 'clustering') &&
         dataToDelete[obj["column_name"]] !== undefined) {
         conditions = conditions + obj["column_name"] + "='" + dataToDelete[obj["column_name"]] + "' AND "
@@ -171,29 +87,35 @@ class Result extends Component {
   handleOnDialogClose = () => {
     this.setState({ open: false })
   }
+
+
   render() {
+    console.log("render() : Result")
     const data = this.props.resultDataReducer.result
     const { rowsPerPage, page } = this.state
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage)
     if (this.props.resultDataReducer.result.length === 0) {
       return null
     }
 
     return (
       <div style={{ width: '99.5%', marginTop: 8 * 3, overflowX: 'auto', paddingLeft: '0.5%' }} >
-        <ExportToExcel
-          data={this.props.resultDataReducer.result}
-          fileName={this.props.queryReducer.keyspace}
-          sheetName={this.props.queryReducer.columnFamily}
-          columnDetails={this.props.formDataReducer.columnDetails} />
+        <EditDialog />
+        <div style={{ paddingLeft: '1%', paddingBottom: '1%' }}>
+          <ExportToExcel
+            data={this.props.resultDataReducer.result}
+            fileName={this.props.keyspace}
+            sheetName={this.props.columnFamily}
+            columnDetails={this.props.columnDetails} />
+        </div>
+
 
         <Table id="table-to-xls">
           <TableHead>
             <TableRow style={{ height: '25px' }}>
-              <TableCell>Action</TableCell>
-              <TableCell>Sl No</TableCell>
+              <TableCell><b>Action</b></TableCell>
+              <TableCell><b>Sl No</b></TableCell>
               {(Object.keys(this.props.resultDataReducer.result[0]).map((value, index) => {
-                return <TableCell key={index}>{value}</TableCell>
+                return <TableCell key={index}><b>{value}</b></TableCell>
               }))}
             </TableRow>
           </TableHead>
@@ -208,14 +130,17 @@ class Result extends Component {
                         this.handleRecordDelete(currentIndex, data[currentIndex])}
                         style={{ height: '15px', width: '15px', color: '#7f0000' }} />
                     </Tooltip>
-                    <EditDialog index={currentIndex} data={data[currentIndex]} />
+                    <Tooltip id="newConn" title=" Edit Record">
+                      <EditIcon onClick={(event) => this.props.flipEditDailog(data[currentIndex])}
+                        style={{ height: '15px', width: '15px' }} />
+                    </Tooltip>
                   </TableCell>
                   <TableCell>{currentIndex + 1}</TableCell>
                   {
                     Object.entries(obj).map((pair, index) => {
                       return <TableCell key={index}
                         style={{ width: '60' }}
-                        onClick={(event) => { this.handleCellOnClick(event) }}>{
+                        onDoubleClick={(event) => { this.handleCellOnClick(event) }}>{
                           this.getTableCellData(pair)}
                       </TableCell>
                     })
@@ -223,11 +148,6 @@ class Result extends Component {
                 </TableRow>
               )
             })}
-            {emptyRows > 0 && (
-              <TableRow style={{ height: 48 * emptyRows }}>
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
           </TableBody>
           <TableFooter>
             <TableRow>
@@ -235,6 +155,7 @@ class Result extends Component {
                 colSpan={3}
                 count={data.length}
                 rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={[1, 5, 25, 50, 100]}
                 page={page}
                 onChangePage={this.handleChangePage}
                 onChangeRowsPerPage={this.handleChangeRowsPerPage}
@@ -258,15 +179,17 @@ class Result extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    queryReducer: state.queryReducer,
+    keyspace: state.queryReducer.keyspace,
+    columnFamily: state.queryReducer.columnFamily,
     resultDataReducer: state.resultDataReducer,
-    formDataReducer: state.formDataReducer,
+    columnDetails: state.formDataReducer.columnDetails,
   }
 }
 
 const matchDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    AddQueryStatement
+    AddQueryStatement,
+    flipEditDailog
   }, dispatch)
 }
 

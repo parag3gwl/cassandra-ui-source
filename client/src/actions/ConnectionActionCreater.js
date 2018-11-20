@@ -14,12 +14,21 @@ export function setConnectedDBIndex(index) {
         index: index,
     }
 }
-export const AddNewConnection = (connections, connection) => {
+export const AddNewConnection = (connection) => {
     console.log("AddNewConnection : ")
-    connections.push(connection)
     return (
         {
             type: "ADD_CONNECTION",
+            connections: connection,
+        }
+    )
+}
+
+export const ImportConnections = (connections) => {
+    console.log("ImportConnections : ")
+    return (
+        {
+            type: "IMPORT_CONNECTIONS",
             connections: connections,
         }
     )
