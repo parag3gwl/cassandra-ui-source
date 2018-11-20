@@ -28,7 +28,6 @@ const Header = (props) => {
             </div>
         )
     }
-
 const mapStateToProps = (state) => {
     return {
       connectionsReducer: state.connectionsReducer
