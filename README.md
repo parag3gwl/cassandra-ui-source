@@ -1,2 +1,11 @@
 # cassandra-ui-source
-This repository consist source code for cassandra ui editor
+
+How to run this code :-
+
+- Download/Clone repository.
+- yarn
+- yarn dev
+
+
+How to create deployable build :- 
+- yarn build
